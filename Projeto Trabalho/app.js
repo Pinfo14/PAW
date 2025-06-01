@@ -75,7 +75,7 @@ app.use(
 
 //ligação ao mongoDB
 const mongoCluster =
-  "mongodb+srv://grupo:paw2025grupo@cluster0.u721f9v.mongodb.net/TrabalhoPaw?retryWrites=true&w=majority&appName=Cluster0";
+ 
 mongoose
   .connect(mongoCluster)
   .then(() => {
