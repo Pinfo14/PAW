@@ -50,10 +50,7 @@ export class CheckoutComponent implements OnInit {
   loadingOrder = false;
   loading = false;
 
-  /** URL e chave de API da Groq/OpenAI para chat completions */
-  private groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
-  private groqKey =
-    'Bearer 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';
+
   private model = 'meta-llama/llama-4-maverick-17b-128e-instruct';
 
    /**
