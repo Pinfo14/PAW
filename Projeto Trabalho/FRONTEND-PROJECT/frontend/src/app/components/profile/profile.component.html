@@ -1,0 +1,274 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/dashboard">Food Delivery</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active"
+            >Início</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/meus-pedidos"
+            routerLinkActive="active"
+            >Meus Pedidos</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/profile" routerLinkActive="active"
+            >Perfil</a
+          >
+        </li>
+      </ul>
+      <button class="btn btn-outline-light" (click)="onLogout()">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4" *ngIf="profile">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h4 mb-0">O Meu Perfil</h2>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onSave()" #profileForm="ngForm">
+            <!-- Informações Pessoais -->
+            <div class="mb-4">
+              <h3 class="h5 mb-3">Informações Pessoais</h3>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="name" class="form-label">Nome</label>
+                  <input
+                    id="name"
+                    name="name"
+                    [(ngModel)]="profile.name"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    [(ngModel)]="profile.email"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="nif" class="form-label">NIF</label>
+                  <input
+                    id="nif"
+                    name="nif"
+                    [(ngModel)]="profile.nif"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="contact" class="form-label">Contacto</label>
+                  <input
+                    id="contact"
+                    name="contact"
+                    [(ngModel)]="profile.contact"
+                    class="form-control"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Morada de Faturação -->
+            <div class="mb-4">
+              <h3 class="h5 mb-3">Morada de Faturação</h3>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="street" class="form-label">Rua</label>
+                  <input
+                    id="street"
+                    name="street"
+                    [(ngModel)]="profile.address.street"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="postalCode" class="form-label"
+                    >Código Postal</label
+                  >
+                  <input
+                    id="postalCode"
+                    name="postalCode"
+                    [(ngModel)]="profile.address.postalCode"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="city" class="form-label">Localidade</label>
+                  <input
+                    id="city"
+                    name="city"
+                    [(ngModel)]="profile.address.city"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-12">
+                  <label for="country" class="form-label">País</label>
+                  <input
+                    id="country"
+                    name="country"
+                    [(ngModel)]="profile.address.country"
+                    class="form-control"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Morada de Entrega -->
+            <div class="mb-4">
+              <h3 class="h5 mb-3">Morada de Entrega</h3>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="d_street" class="form-label">Rua</label>
+                  <input
+                    id="d_street"
+                    name="d_street"
+                    [(ngModel)]="profile.deliveryAddress.street"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="d_postalCode" class="form-label"
+                    >Código Postal</label
+                  >
+                  <input
+                    id="d_postalCode"
+                    name="d_postalCode"
+                    [(ngModel)]="profile.deliveryAddress.postalCode"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="d_city" class="form-label">Localidade</label>
+                  <input
+                    id="d_city"
+                    name="d_city"
+                    [(ngModel)]="profile.deliveryAddress.city"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-12">
+                  <label for="d_country" class="form-label">País</label>
+                  <input
+                    id="d_country"
+                    name="d_country"
+                    [(ngModel)]="profile.deliveryAddress.country"
+                    class="form-control"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="d-flex gap-2 mb-4">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="profileForm.invalid"
+              >
+                <i class="bi bi-save me-2"></i>Guardar Alterações
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="openChangePassword()"
+              >
+                <i class="bi bi-key me-2"></i>Mudar Password
+              </button>
+            </div>
+          </form>
+
+          <!-- Mensagem de erro -->
+          <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+        </div>
+      </div>
+
+      <!-- Histórico de Encomendas -->
+      <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="h5 mb-0">Histórico de Encomendas</h3>
+        </div>
+        <div class="card-body">
+          <app-orders-history></app-orders-history>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- BACKDROP -->
+<div
+  *ngIf="showChangePw"
+  class="modal-backdrop fade show"
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+  "
+></div>
+
+<!-- MODAL CENTRALIZADO -->
+<div
+  *ngIf="showChangePw"
+  style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    z-index: 1051;
+  "
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Mudar Password</h5>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="closeChangePassword()"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <app-change-password></app-change-password>
+    </div>
+  </div>
+</div>

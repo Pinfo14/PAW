@@ -1,0 +1,176 @@
+<script>
+  // Função para alterar os campos de morada de entrega
+  function toggleFields() {
+    const role = document.getElementById('role').value;
+    const clientFields = document.getElementById('client-fields');
+    const deliverySection = document.getElementById('delivery-address-section');
+    const checkbox = document.getElementById('same-address');
+
+    // Se o utilizador for um cliente, mostramos os campos do cliente
+    if (role === 'Client') {
+      clientFields.style.display = 'block';
+      clientFields.querySelectorAll('input').forEach(el => el.required = true);
+      toggleDeliveryFields();  // Atualiza a entrega dependendo da checkbox
+    } else {
+      clientFields.style.display = 'none';
+      clientFields.querySelectorAll('input').forEach(el => el.required = false);
+      checkbox.checked = false;
+      deliverySection.style.display = 'none';
+    }
+
+    // Alterar o valor do campo role de acordo com o UserType
+    const roleInput = document.getElementById('roleInput');
+    roleInput.value = role;  // Atualiza o valor de role com base na seleção do UserType
+  }
+
+  // Função para alterar a visibilidade dos campos de morada de entrega
+  function toggleDeliveryFields() {
+    const checkbox = document.getElementById('same-address');
+    const deliverySection = document.getElementById('delivery-address-section');
+
+    // Se a checkbox estiver marcada, preenche os campos de entrega com os valores de faturação
+    if (checkbox.checked) {
+      document.querySelector('input[name="deliveryAddress[street]"]').value = document.querySelector('input[name="address[street]"]').value;
+      document.querySelector('input[name="deliveryAddress[city]"]').value = document.querySelector('input[name="address[city]"]').value;
+      document.querySelector('input[name="deliveryAddress[postalCode]"]').value = document.querySelector('input[name="address[postalCode]"]').value;
+      document.querySelector('input[name="deliveryAddress[country]"]').value = document.querySelector('input[name="address[country]"]').value;
+
+      // Torna os campos de "Delivery Address" não editáveis se a checkbox for marcada
+      deliverySection.querySelectorAll('input').forEach(input => input.disabled = true);
+    } else {
+      // Se a checkbox não estiver marcada, permite que o utilizador edite os campos de entrega
+      deliverySection.style.display = 'block';
+      deliverySection.querySelectorAll('input').forEach(input => input.disabled = false);
+    }
+  }
+
+  window.onload = function() {
+    toggleFields();  // Inicializa com base no estado atual
+  };
+</script>
+<script>
+  // Função para alternar os campos de morada de entrega
+  function toggleFields() {
+    const role = document.getElementById('role').value;
+    const clientFields = document.getElementById('client-fields');
+    const deliverySection = document.getElementById('delivery-address-section');
+    const checkbox = document.getElementById('same-address');
+
+    // Se o utilizador for um cliente, mostramos os campos do cliente
+    if (role === 'Client') {
+      clientFields.style.display = 'block';
+      clientFields.querySelectorAll('input').forEach(el => el.required = true);
+      toggleDeliveryFields();  // Atualiza a entrega dependendo da checkbox
+    } else {
+      clientFields.style.display = 'none';
+      clientFields.querySelectorAll('input').forEach(el => el.required = false);
+      checkbox.checked = false;
+      deliverySection.style.display = 'none';
+    }
+
+    // Alterar o valor do campo role de acordo com o UserType
+    const roleInput = document.getElementById('roleInput');
+    roleInput.value = role;  // Atualiza o valor de role com base na seleção do UserType
+  }
+
+  // Função para alternar a visibilidade dos campos de morada de entrega
+  function toggleDeliveryFields() {
+    const checkbox = document.getElementById('same-address');
+    const deliverySection = document.getElementById('delivery-address-section');
+
+    // Se a checkbox estiver marcada, preenche os campos de entrega com os valores de faturação
+    if (checkbox.checked) {
+      document.querySelector('input[name="deliveryAddress[street]"]').value = document.querySelector('input[name="address[street]"]').value;
+      document.querySelector('input[name="deliveryAddress[city]"]').value = document.querySelector('input[name="address[city]"]').value;
+      document.querySelector('input[name="deliveryAddress[postalCode]"]').value = document.querySelector('input[name="address[postalCode]"]').value;
+      document.querySelector('input[name="deliveryAddress[country]"]').value = document.querySelector('input[name="address[country]"]').value;
+
+      // Torna os campos de "Delivery Address" não editáveis se a checkbox for marcada
+      deliverySection.querySelectorAll('input').forEach(input => input.disabled = true);
+    } else {
+      // Se a checkbox não estiver marcada, permite que o usuário edite os campos de entrega
+      deliverySection.style.display = 'block';
+      deliverySection.querySelectorAll('input').forEach(input => input.disabled = false);
+    }
+  }
+
+  window.onload = function() {
+    toggleFields();  // Inicializa com base no estado atual
+  };
+</script>
+
+  
+<h1>Registar</h1>
+
+<% if (typeof error !== 'undefined') { %>
+  <p style="color: red;"><%= error %></p>
+<% } %>
+
+<form action="/registerSubmitted" method="POST">
+  <label>Nome:</label>
+  <input class="form-control" type="text" name="name" value="<%= data?.name || '' %>" required /><br/>
+
+  <label>Email:</label>
+  <input class="form-control" type="email" name="email" value="<%= data?.email || '' %>" required /><br/>
+
+  <label>Password:</label>
+  <input class="form-control" type="password" name="password" required /><br/>
+
+  <label>Tipo de Utilizador:</label>
+  <select class="form-select" name="UserType" id="role" onchange="toggleFields()" required>
+    <option value="">-- Select --</option>
+    <option value="Client" <%= data?.UserType === 'Client' ? 'selected' : '' %>>Client</option>
+    <option value="RestAdmin" <%= data?.UserType === 'RestAdmin' ? 'selected' : '' %>>Restaurant Administrator</option>
+  </select><br/>
+
+  <!-- CLIENT FIELDS -->
+  <div id="client-fields" style="display:none; margin-top:10px;">
+    <label>Contacto:</label>
+    <input class="form-control" type="tel" name="contact" value="<%= data?.contact || '' %>" /><br/>
+
+    <label>NIF:</label>
+    <input class="form-control" type="text" name="nif" pattern="\d{9}" maxlength="9" value="<%= data?.nif || '' %>" title="Insira exatamente 9 dígitos" /><br/>
+
+    <h3>Morada de Faturação</h3>
+    <label>Rua:</label>
+    <input class="form-control"  type="text" name="address[street]" value="<%= data?.address?.street || '' %>" required /><br/>
+
+    <label>Cidade:</label>
+    <input  class="form-control" type="text" name="address[city]" value="<%= data?.address?.city || '' %>" required /><br/>
+
+    <label>Código Postal:</label>
+    <input class="form-control" type="text" name="address[postalCode]" value="<%= data?.address?.postalCode || '' %>" required /><br/>
+
+    <label>Pais:</label>
+    <input class="form-control" type="text" name="address[country]" value="<%= data?.address?.country || 'Portugal' %>" required /><br/>
+
+    <!-- Checkbox para mostrar delivery address -->
+    <label>
+      <input type="checkbox" id="same-address" name="isDeliverySame" onchange="toggleDeliveryFields()" <%= data?.isDeliverySame ? 'checked' : '' %> />
+      Morada de Entrega é igual à Morada de Faturação
+    </label><br/>
+
+    <!-- DELIVERY ADDRESS -->
+    <div id="delivery-address-section" style="margin-top: 10px;">
+      <h3>Morada de Entrega</h3>
+      <label>Rua:</label>
+      <input type="text" name="deliveryAddress[street]" value="<%= data?.deliveryAddress?.street || '' %>" /><br/>
+
+      <label>Cidade:</label>
+      <input class="form-control" type="text" name="deliveryAddress[city]" value="<%= data?.deliveryAddress?.city || '' %>" /><br/>
+
+      <label>Código Postal:</label>
+      <input class="form-control" type="text" name="deliveryAddress[postalCode]" value="<%= data?.deliveryAddress?.postalCode || '' %>" /><br/>
+
+      <label>Pais:</label>
+      <input class="form-control" type="text" name="deliveryAddress[country]" value="<%= data?.deliveryAddress?.country || '' %>" /><br/>
+    </div>
+  </div>
+
+  <!-- STAFF HIDDEN ROLE -->
+  <!-- Campo hidden para role, que vai ser alterado dinamicamente -->
+  <input type="hidden" id="roleInput" name="role" value="Client" />
+
+  <br/>
+  <button class="btn btn-primary" type="submit">Registar Utilizador</button>
+</form>

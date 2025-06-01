@@ -1,0 +1,39 @@
+.login-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  .login-container h2 {
+    text-align: center;
+  }
+  .login-container div {
+    margin-top: 1rem;
+  }
+  .login-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .login-container input {
+    width: 100%;
+    padding: 0.5rem;
+  }
+  .login-container button {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.75rem;
+  }
+  .error {
+    margin-top: 1rem;
+    color: red;
+    text-align: center;
+  }
+  .login-background {
+     min-height: 100vh;
+  max-height: 100vh;
+  background: url('http://localhost:3000/uploads/login-bg.png') no-repeat center center fixed;
+  background-size: cover;
+  overflow: hidden;
+  }
+  

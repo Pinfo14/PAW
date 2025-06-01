@@ -1,0 +1,39 @@
+<h2 class="mb-4 text-center">Últimas Encomendas</h2>
+
+<% if (orders && orders.length > 0) { %>
+  <div class="list-group shadow">
+    <% orders.forEach(order => { %>
+      <div class="list-group-item list-group-item-action mb-2 rounded">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="mb-1">
+              <i class="bi bi-person-fill"></i>
+              <%= order.customerId?.name || "Cliente desconhecido" %>
+            </h5>
+            <p class="mb-1 text-muted">
+              Data: <%= new Date(order.createdAt).toLocaleString('pt-PT') %>
+            </p>
+            <p class="mb-1">
+              Nº de Pratos: <strong><%= order.meals.length %></strong>
+            </p>
+            <p class="mb-1">
+              Tempo estimado: <strong><%= order.preparationTime %> min</strong>
+            </p>
+          </div>
+          <span class="badge
+            <% if (order.currentStatus === 'Ordered') { %> bg-warning text-dark
+            <% } else if (order.currentStatus === 'Preparing') { %> bg-primary
+            <% } else if (order.currentStatus === 'Ready') { %> bg-info
+            <% } else if (order.currentStatus === 'Delivered') { %> bg-success
+            <% } else { %> bg-secondary <% } %>">
+            <%= order.currentStatus %>
+          </span>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } else { %>
+  <div class="alert alert-info text-center">
+    Ainda não há encomendas registadas.
+  </div>
+<% } %>

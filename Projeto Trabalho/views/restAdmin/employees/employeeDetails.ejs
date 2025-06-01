@@ -1,0 +1,60 @@
+
+
+<h2 class="mb-4 section-title"><i class="bi bi-person-badge me-2"></i>Detalhes do Funcionário</h2>
+
+<div class="mb-3 row">
+  <label class="col-sm-2 col-form-label label-icon">
+    <i class="bi bi-person-circle me-1"></i>Nome:
+  </label>
+  <div class="col-sm-10 value-text">
+    <%= employee.name %>
+  </div>
+</div>
+
+<div class="mb-3 row">
+  <label class="col-sm-2 col-form-label label-icon">
+    <i class="bi bi-envelope me-1"></i>Email:
+  </label>
+  <div class="col-sm-10 value-text">
+    <%= employee.email %>
+  </div>
+</div>
+
+<div class="mb-3 row">
+  <label class="col-sm-2 col-form-label label-icon">
+    <i class="bi bi-briefcase me-1"></i>Cargo:
+  </label>
+  <div class="col-sm-10 value-text">
+    <%= employee.role %>
+  </div>
+</div>
+
+<div class="mb-3 row">
+  <label class="col-sm-2 col-form-label label-icon">
+    <i class="bi bi-telephone me-1"></i>Telefone:
+  </label>
+  <div class="col-sm-10 value-text">
+    <%= employee.phone || 'Não disponível' %>
+  </div>
+</div>
+
+<div class="mb-3 row">
+  <label class="col-sm-2 col-form-label label-icon">
+    <i class="bi bi-calendar-event me-1"></i>Data de Criação:
+  </label>
+  <div class="col-sm-10 value-text">
+    <%= employee.createdAt?.toLocaleDateString('pt-PT') %>
+  </div>
+</div>
+
+<div class="mt-4">
+  <a href="/rest/employees" class="btn btn-outline-secondary ">
+    <i class="bi bi-arrow-left-circle"></i>Voltar
+  </a>
+
+  <form action="/rest/employees/delete/<%= employee._id %>?_method=DELETE" method="POST" class="d-inline">
+    <button type="submit" class="btn btn-danger btn-md" onclick="return confirm('Tens a certeza que queres apagar este funcionário?')">
+        <i class="bi bi-trash"></i>Delete
+    </button>
+</form>
+</div>

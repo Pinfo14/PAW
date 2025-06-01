@@ -1,0 +1,126 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/dashboard">Food Delivery</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active"
+            >Início</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/meus-pedidos"
+            routerLinkActive="active"
+            >Meus Pedidos</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/profile" routerLinkActive="active"
+            >Perfil</a
+          >
+        </li>
+      </ul>
+      <button class="btn btn-outline-light" (click)="onLogout()">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<ng-container *ngIf="orderService.pending$ | async as order; else none">
+  <div class="container py-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white ">
+        <div class="p-3 d-flex justify-content-between align-items-center">
+        <h2 class="h4 mb-0">Pedido em Curso</h2>
+        <button
+          *ngIf="order.currentStatus==='Ordered'"
+          class="btn btn-danger rounded btn-sm"
+          [disabled]="remainingMs === 0"
+          (click)="onCancel()"
+        >
+          <i class="bi bi-x-circle me-1"></i>
+          <ng-container *ngIf="remainingMs > 0">
+            Cancelar ({{ formattedRemaining }})
+          </ng-container>
+          <ng-container *ngIf="remainingMs === 0">
+            Prazo Expirado
+          </ng-container>
+        </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <p class="mb-2">
+              <strong>Restaurante:</strong>
+              <span class="text-muted">{{ order.restaurant.name }}</span>
+            </p>
+            <p class="mb-2">
+              <strong>Status:</strong>
+              <span class="badge bg-info">{{ order.currentStatus }}</span>
+            </p>
+          </div>
+        </div>
+
+        <h4 class="mb-3">Itens:</h4>
+        <ul class="list-group mb-4">
+          <li *ngFor="let m of order.meals" class="list-group-item">
+            <div class="d-flex align-items-center">
+              <div class="flex-shrink-0 me-3">
+                <!-- se tiver imagens, usa a primeira -->
+                <img
+                  *ngIf="m.images?.length"
+                  [src]="imageService.getMealImageUrl(m.images[0].imagePath)"
+                  [alt]="m.name"
+                  class="rounded"
+                  style="width: 80px; height: 80px; object-fit: cover"
+                />
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">{{ m.sizes[0].name }}× {{ m.name }}</h6>
+                    <small class="text-muted">{{ m.description }}</small>
+                  </div>
+                  <span class="badge bg-primary rounded-pill">
+                    {{
+                      m.sizes[0].price | currency : "EUR" : "symbol" : "1.2-2"
+                    }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <div *ngIf="pickupCode" class="alert alert-info">
+          <strong>Código de Recolha:</strong>
+          <span class="h5 ms-2">{{ pickupCode }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #none>
+  <div class="container py-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="h4 mb-0">Pedido em Curso</h2>
+      </div>
+      <div class="card-body text-center">
+        <p class="text-muted mb-0">Não há pedidos pendentes.</p>
+      </div>
+    </div>
+  </div>
+</ng-template>

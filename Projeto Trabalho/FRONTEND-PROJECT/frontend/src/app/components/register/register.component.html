@@ -1,0 +1,204 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-lg">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4">Registo de Cliente</h2>
+          <form (ngSubmit)="onSubmit()" #regForm="ngForm">
+            <!-- Email e Password -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  class="form-control"
+                  [(ngModel)]="email"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Password</label>
+                <input
+                  name="password"
+                  type="password"
+                  class="form-control"
+                  [(ngModel)]="password"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Nome e NIF -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Nome Completo</label>
+                <input
+                  name="name"
+                  class="form-control"
+                  [(ngModel)]="name"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">NIF</label>
+                <input
+                  name="nif"
+                  class="form-control"
+                  [(ngModel)]="nif"
+                  required
+                  pattern="^\d{9}$"
+                />
+              </div>
+            </div>
+
+            <!-- CompanyName condicional -->
+            <div class="mb-3" *ngIf="needsCompanyName">
+              <label class="form-label">Nome da Empresa</label>
+              <input
+                name="companyName"
+                class="form-control"
+                [(ngModel)]="companyName"
+                required
+              />
+            </div>
+
+            <!-- Contacto -->
+            <div class="mb-4">
+              <label class="form-label">Contacto (começa por 2 ou 9)</label>
+              <input
+                name="contact"
+                class="form-control"
+                [(ngModel)]="contact"
+                required
+                pattern="^[29]\d{8}$"
+              />
+            </div>
+
+            <!-- Endereço de faturação -->
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Endereço de Faturação</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <label class="form-label">Rua</label>
+                    <input
+                      name="street"
+                      class="form-control"
+                      [(ngModel)]="address.street"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Código Postal (XXXX-XXX)</label>
+                    <input
+                      name="postalCode"
+                      class="form-control"
+                      [(ngModel)]="address.postalCode"
+                      required
+                      pattern="^\d{4}-\d{3}$"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Localidade</label>
+                    <input
+                      name="city"
+                      class="form-control"
+                      [(ngModel)]="address.city"
+                      required
+                    />
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label">País</label>
+                    <input
+                      name="country"
+                      class="form-control"
+                      [(ngModel)]="address.country"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Delivery same -->
+            <div class="form-check mb-4">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [(ngModel)]="isDeliverySame"
+                name="isDeliverySame"
+                id="deliverySame"
+              />
+              <label class="form-check-label" for="deliverySame">
+                Endereço de entrega igual ao de faturação
+              </label>
+            </div>
+
+            <!-- Endereço de entrega (se diferente) -->
+            <div class="card mb-4" *ngIf="!isDeliverySame">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Endereço de Entrega</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <label class="form-label">Rua</label>
+                    <input
+                      name="d_street"
+                      class="form-control"
+                      [(ngModel)]="deliveryAddress.street"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Código Postal</label>
+                    <input
+                      name="d_postalCode"
+                      class="form-control"
+                      [(ngModel)]="deliveryAddress.postalCode"
+                      required
+                      pattern="^\d{4}-\d{3}$"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Localidade</label>
+                    <input
+                      name="d_city"
+                      class="form-control"
+                      [(ngModel)]="deliveryAddress.city"
+                      required
+                    />
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label">País</label>
+                    <input
+                      name="d_country"
+                      class="form-control"
+                      [(ngModel)]="deliveryAddress.country"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botão e erro -->
+            <div class="d-grid gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                [disabled]="regForm.invalid"
+              >
+                Registar
+              </button>
+            </div>
+            <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

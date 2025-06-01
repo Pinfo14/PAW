@@ -1,0 +1,50 @@
+<div class="login-background">
+
+  <div class="row justify-content-center align-items-center min-vh-100 ">
+    <div class="col-12 col-md-6 col-lg-4 ">
+      <div class="card shadow-lg">
+        <div class="card-body p-5 ">
+          <h2 class="text-center mb-4">Login</h2>
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+                class="form-control"
+          [(ngModel)]="email"
+          required
+                placeholder="Seu email"
+        />
+      </div>
+            <div class="mb-4">
+              <label for="password" class="form-label">Senha</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+                class="form-control"
+          [(ngModel)]="password"
+          required
+                placeholder="Sua senha"
+        />
+            </div>
+            <button 
+              type="submit" 
+              class="btn btn-primary w-100 py-2 mb-3" 
+              [disabled]="loginForm.invalid">
+              Entrar
+            </button>
+            <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+            <!-- Novo link para registo -->
+            <div class="text-center mt-3">
+              Ainda não tem conta? 
+              <a routerLink="/register" routerLinkActive="active">Registar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

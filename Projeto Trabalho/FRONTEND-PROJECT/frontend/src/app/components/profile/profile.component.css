@@ -1,0 +1,47 @@
+/* cobertura total para esbater o fundo */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+  }
+  
+  /* fundo semitransparente */
+  .backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+  }
+  
+  /* a caixa branca centrada */
+  .modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    z-index: 1001;
+  }
+  
+  /* botão de fechar no topo direito da modal */
+  .close-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  

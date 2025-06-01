@@ -1,0 +1,112 @@
+
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h2 class="m-0 flex-grow-1">   
+                        <i class="bi bi-journal-text me-2"></i>Lista de Pratos
+                        </h2>
+                       
+                        <div class="d-flex gap-2">
+                         
+                            <a href="/rest/meals/addMeal" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Adicionar Prato
+                            </a>
+                            <a href="/rest/newCatgory" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Pedir nova categoria
+                             </a>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                          <form class="row g-2 align-items-center" method="GET" action="/rest/meals">
+                            <!-- Campo de texto para nome do prato -->
+                            <div class="col-md-4">
+                              <label for="search" class="form-label">Pesquisar por nome</label>
+                              <input type="text" name="search" id="search" class="form-control" placeholder="Ex: Bacalhau" value="<%= searchQuery || '' %>">
+                            </div>
+                      
+                            <!-- Dropdown de categorias -->
+                            <div class="col-md-4">
+                              <label for="category" class="form-label">Filtrar por categoria</label>
+                              <select name="category" id="category" class="form-select">
+                                <option value="">Todas as Categorias</option>
+                                <% categories.forEach(cat => { %>
+                                  <option value="<%= cat._id %>" <%= selectedCategory == cat._id.toString() ? 'selected' : '' %>><%= cat.name %></option>
+                                <% }) %>
+                              </select>
+                            </div>
+                           <!-- Botão de filtro -->
+                                <div class="col-md-2 align-self-end">
+                                    <button type="submit" class="btn btn-primary ">
+                                    <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                          </form>
+                        </div>
+                      </div>
+                      
+
+
+                    <table class="table table-striped table-bordered align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Imagem</th>
+                                <th>Nome</th>
+                                <th>Preço (€)</th>
+                                <th>Opções</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (!meals || meals.length === 0) { %>
+                                <tr>
+                                    <td colspan="4">Nenhuma refeição adicionada ainda.</td>
+                                </tr>
+                            <% } else { %>
+                                <% meals.forEach(meal => { %>
+                                    <tr class="meal-row">
+                                        <td>
+                                            <% if (meal.images && meal.images.length > 0) { %>
+                                                <img src="/uploads/<%- meal.images[0].imagePath %>" alt="Imagem do prato" width="100" height="100" class="img-thumbnail">
+                                            <% } else { %>
+                                                <span class="text-muted">Sem imagem</span>
+                                            <% } %>
+                                        </td>
+                                        <td><%= meal.name %></td>
+                                        <td>
+                                            €<%= meal.sizes && meal.sizes.length > 0 ? meal.sizes[0].price.toFixed(2) : 'N/A' %>
+                                            <small class="text-muted d-block">
+                                                (<%= meal.sizes && meal.sizes.length > 0 ? meal.sizes[0].name : 'sem doses' %>)
+                                            </small>
+                                        </td>
+                                        <td> 
+                                            <a href="meals/mealDetail/<%= meal._id %>" class="btn btn-info btn-md" title="Ver prato">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="meals/edit/<%= meal._id %>"" class="btn btn-warning btn-md" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="/rest/meals/delete/<%= meal._id %>" method="POST" style="display:inline;" onsubmit="return confirm('Tens a certeza que queres eliminar este prato?');">
+                                                <button type="submit" class="btn btn-danger btn-md">
+                                                  <i class="bi bi-trash"></i>
+                                                </button>
+                                              </form>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } %>
+                            
+                        </tbody>
+                    </table>
+                    <!-- Paginação -->
+                        <nav aria-label="Navegação de páginas" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= page === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            </ul>
+                        </nav>
+                </div>
+
+     
+                  
+    

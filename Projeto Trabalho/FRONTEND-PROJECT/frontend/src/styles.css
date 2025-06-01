@@ -1,0 +1,175 @@
+:root {
+/* Foodie Vibes Palette */
+  --brand-primary:    #FF6F61;
+  --bg-primary:   #FF6F61;  /* coral vibrante */
+  --brand-secondary:  #06D6A0;   /* verde menta */
+  --bg-light:         #FCECC9;   /* creme suave */
+  --text-dark:        #073B4C;   /* azul petróleo */
+  --highlight:        #FFD166;   /* amarelo solar */
+}
+
+
+body {
+  background: url('http://localhost:3000/uploads/backgound.png') no-repeat center center fixed;
+   min-height: 100vh;
+  max-height: 100vh;
+  background-size: cover;
+ 
+}
+.container {
+  background-color: transparent;
+  padding: 1rem;
+  border-radius: 2%;
+}
+
+.bg-primary{
+  background-color: var(--bg-primary)!important;
+  border-color: var(--bg-light)!important;
+}
+
+/* Nav mantém-se transparente para se integrar com o background */
+nav > .container {
+  background-color: transparent;
+}
+
+.card {
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform .2s;
+   background-color: #fff; 
+}
+
+
+/* 1) Estado normal do outline */
+.btn-group .btn-outline-primary {
+  color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
+  background-color: transparent !important;
+}
+
+/* 2) Hover e focus (quando não está selecionado) */
+.btn-group .btn-outline-primary:hover,
+.btn-group .btn-outline-primary:focus {
+  background-color: var(--brand-primary)10 !important; /* 10% de opacidade */
+  border-color: var(--brand-primary) !important;
+  color: var(--brand-primary) !important;
+  text-decoration: none;
+}
+
+
+
+
+.btn-primary,primary {
+    background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: white;
+}
+.btn-primary:hover {
+   background-color: #e25550; /* ligeiramente mais escuro que #FF6F61 */
+  border-color: #e25550;
+}
+/*
+.badge {
+  background-color: var(--brand-secondary) !important;
+}*/
+.bi-cart-plus {
+  color: var(--brand-secondary);
+}
+
+.card-title {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.card-header {
+  background-color: #fff5f0;
+  border-bottom: 2px solid var(--brand-secondary);
+}
+
+/* Sobrescreve o .bg-primary do Bootstrap */
+.navbar.bg-primary {
+background: rgba(255, 155, 97, 10) ;
+background: linear-gradient(90deg,rgba(255, 155, 97, 0.9) 100%, rgba(250, 214, 192, 0.5) 50%)!important;
+}
+
+/* Links da navbar */
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255,255,255,0.85);
+  transition: color 0.2s;
+}
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+  color: var(--highlight) !important;  /* amarelo solar para foco/ativo */
+}
+
+/* Botão toggler (para mobile) */
+.navbar-dark .navbar-toggler {
+  border-color: rgba(255,255,255,0.5);
+}
+.navbar-dark .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+/* Botões Login/Logout */
+.navbar .btn-outline-light {
+  color: white;
+  border-color: white;
+  transition: background-color 0.2s, color 0.2s;
+}
+.navbar .btn-outline-light:hover {
+  background-color: white;
+  color: var(--brand-primary);
+}
+
+/* Quando o input .btn-check está seleccionado, o label adjacente recebe o fundo e borda */
+.btn-check:checked + .btn-outline-primary {
+  background-color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
+  color: #fff !important;
+}
+
+/* Hover no label (quando não está checked) */
+.btn-outline-primary:hover {
+  background-color: var(--brand-primary)10 !important; /* 10% de opacidade, por ex. */
+  border-color: var(--brand-primary) !important;
+  color: var(--brand-primary) !important;
+}
+
+/* Quando disabled (bloqueado) */
+.btn-outline-primary.disabled,
+.btn-outline-primary:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Badge “Bloqueado” */
+.badge.bg-secondary {
+  background-color: var(--text-dark) !important; /* escolhe a tua neutra escura */
+}
+
+/* Se quiseres mudar o contorno do grupo inteiro: */
+.btn-group .btn-outline-primary {
+  border-radius: 0;
+  border-width: 2px;
+}
+/* Hover em qualquer label dentro do btn-group */
+.btn-group > .btn-outline-primary:hover,
+.btn-group > .btn-outline-primary:focus {
+  background-color: rgba(255, 155, 97, 0.1) !important;  /* 10% de coral */
+  border-color: var(--brand-primary) !important;         /* coral sólido */
+  color: var(--brand-primary) !important;                /* texto coral */
+}
+
+/* Hover quando o radio está checked */
+.btn-check:checked + .btn-outline-primary:hover {
+  background-color: var(--brand-primary) !important;     /* coral sólido */
+  border-color: var(--brand-primary) !important;
+  color: #fff !important;
+}
+
+/* Garante que o focus (tab) ganha um outline coral */
+.btn-group > .btn-outline-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 0.25rem rgba(255, 155, 97, 0.4) !important;
+}
+

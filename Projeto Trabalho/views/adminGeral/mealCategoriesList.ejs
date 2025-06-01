@@ -1,0 +1,83 @@
+
+  <h2 class="mb-4"><i class="bi bi-tags-fill me-2"></i>Gerir Categorias de Pratos</h2>
+
+  <% if (error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+  <% } %>
+  <% if (message) { %>
+    <div class="alert alert-success"><%= message %></div>
+  <% } %>
+
+ 
+<div class="row">
+  <h3>Nova categoria</h3>
+</div>
+   <!-- Formulário para adicionar nova categoria -->
+   <form action="/admin/mealCategories" method="POST" class="row g-3 align-items-center mb-4">
+    <div class="col-auto">
+      <label for="name" class="col-form-label">Nova Categoria:</label>
+    </div>
+    <div class="col-md-4">
+      <input type="text" id="name" name="name" class="form-control" placeholder="Ex: Massas" required>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Adicionar
+      </button>
+    </div>
+  </form>
+
+  <% if (categories.length === 0) { %>
+    <div class="alert alert-info">Ainda não existem categorias de pratos.</div>
+  <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Categoria</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% categories.forEach(function(category) { %>
+            <tr>
+              <td><strong><%= category.name %></strong></td>
+              <td>
+                <span class="badge bg-<%= category.approved ? 'success' : 'secondary' %>">
+                  <%= category.approved ? 'Ativado' : 'Desativado' %>
+                </span>
+              </td>
+              <td>
+                <!-- Toggle -->
+                <form action="/admin/mealCategories/<%= category._id %>/toggle" method="POST" class="d-inline">
+                  <% if (category.approved) { %>
+                    <button type="submit" name="action" value="deactivate" class="btn btn-warning btn-sm me-1">
+                      <i class="bi bi-eye-slash"></i> Desativar
+                    </button>
+                  <% } else { %>
+                    <button type="submit" name="action" value="activate" class="btn btn-success btn-sm me-1">
+                      <i class="bi bi-eye"></i> Ativar
+                    </button>
+                  <% } %>
+                </form>
+
+                <!-- Remover -->
+                <form action="/admin/mealCategories/<%= category._id %>/delete" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover esta categoria?');">
+                  <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash-fill"></i> Remover
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+
+  <div class="mt-4">
+    <a href="/admin/dashboard" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle"></i> Voltar ao Dashboard
+    </a>
+  </div>

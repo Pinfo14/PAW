@@ -1,0 +1,63 @@
+<h2 class="mb-4">Detalhes do Prato: <%= meal.name %></h2>
+
+<ul class="list-group mb-3">
+  <li class="list-group-item">
+    <strong>Descrição:</strong> <%= meal.description %>
+  </li>
+
+  <li class="list-group-item">
+    <strong>Doses e Preços:</strong>
+    <% if (meal.sizes && meal.sizes.length > 0) { %>
+      <ul class="list-unstyled mt-2">
+        <% meal.sizes.forEach(size => { %>
+          <li>
+            <i class="bi bi-chevron-right"></i>
+            <strong><%= size.name %>:</strong> €<%= size.price.toFixed(2) %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <span class="text-muted">Sem doses definidas.</span>
+    <% } %>
+  </li>
+
+  <li class="list-group-item">
+    <strong>Categorias:</strong>
+    <% if (meal.category && meal.category.length > 0) { %>
+      <% meal.category.forEach((cat) => { %>
+        <span class="badge bg-secondary me-1">
+          <%= cat.name ? cat.name : cat %>
+        </span>
+      <% }) %>
+    <% } else { %>
+      <span class="text-muted">Não definido.</span>
+    <% } %>
+  </li>
+</ul>
+
+<div class="mb-3">
+  <strong>Imagens do Prato:</strong>
+  <% if (meal.images && meal.images.length > 0) { %>
+    <div class="row">
+      <% meal.images.forEach(image => { %>
+        <div class="col-md-4 mb-3">
+          <img src="/uploads/<%= image.imagePath %>" alt="Imagem do prato" class="img-thumbnail img-fluid">
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p class="text-muted">Nenhuma imagem disponível.</p>
+  <% } %>
+</div>
+
+<div class="d-flex gap-2">
+  <a href="/rest/meals/delete/<%= meal._id %>" class="btn btn-danger btn-sm">
+    <i class="bi bi-trash"></i> Eliminar
+  </a>
+  <a href="/rest/meals/edit/<%= meal._id %>" class="btn btn-warning btn-sm">
+    <i class="bi bi-pencil"></i> Atualizar
+  </a>
+  <a href="javascript:history.back()" class="btn btn-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i> Voltar
+  </a>
+</div>

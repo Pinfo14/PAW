@@ -1,0 +1,185 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">Food Delivery</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active"
+            >Início</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/meus-pedidos"
+            routerLinkActive="active"
+            >Meus Pedidos</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/profile" routerLinkActive="active"
+            >Perfil</a
+          >
+        </li>
+      </ul>
+      <ng-container *ngIf="authService.getToken(); else showLogin">
+        <button class="btn btn-outline-light" (click)="onLogout()">
+          Logout
+        </button>
+      </ng-container>
+      <ng-template #showLogin>
+        <button class="btn btn-outline-light" routerLink="/login">Login</button>
+      </ng-template>
+    </div>
+  </div>
+</nav>
+
+<app-comments-list
+  *ngIf="viewingCommentsFor"
+  [restaurantId]="viewingCommentsFor"
+  (close)="closeComments()"
+>
+</app-comments-list>
+<div class="container rounded">
+  <!-- Locator de restaurantes -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <app-restaurant-locator
+        [cartItemCount]="cartItemCount"
+        [cartRestaurantId]="cartRestaurantId"
+        [cartOrderType]="cartOrderType"
+        (select)="onRestaurantSelected($event)"
+        (typeChange)="onTypeChange($event)"
+        (viewCommentsEmitter)="viewComments($event)"
+      >
+      </app-restaurant-locator>
+    </div>
+  </div>
+
+  <!-- Área de menus -->
+  <section *ngIf="selectedRestaurant" class="mb-4" id="after-restaurant-select">
+    <div class="card">
+      <div class="card-header bg-light">
+        <h2 class="h4 mb-0">Menus de {{ selectedRestaurant.name }}</h2>
+      </div>
+      <div class="card-body">
+        <div *ngIf="loadingMenus" class="text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">A carregar...</span>
+          </div>
+        </div>
+        <div *ngIf="errorMenus" class="alert alert-danger">
+          {{ errorMenus }}
+        </div>
+
+        <div class="row" *ngIf="!loadingMenus && !errorMenus">
+          <div class="col-md-4 mb-3" *ngFor="let m of activeMenus">
+            <div
+              class="card h-100"
+              [class.border-primary]="selectedMenu?._id === m._id"
+              (click)="selectMenu(m)"
+              style="cursor: pointer"
+            >
+              <div class="card-body">
+                <h5 class="card-title">{{ m.name }}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Área de pratos -->
+  <section *ngIf="selectedMenu" class="mb-4" id="after-menu-select">
+      <div class="card">
+        <div class="card-header bg-light">
+          <h4 class="mb-0">Pratos de "{{ selectedMenu.name }}"</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="loadingMeals" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">A carregar...</span>
+            </div>
+          </div>
+          <div *ngIf="errorMeals" class="alert alert-danger">
+            {{ errorMeals }}
+          </div>
+
+              <div class="row" *ngIf="!loadingMeals && !errorMeals">
+            <div class="col-md-6 mb-4" *ngFor="let meal of mealsList" [attr.data-meal-id]="meal._id">
+              <div class="card h-100 card-hover-effect">
+                <!-- Slideshow de imagens -->
+          <div class="card-slideshow" *ngIf="meal.images?.length">
+            <div 
+              class="slide"
+              *ngFor="let img of meal.images; let i = index"
+              [class.active]="i === 0"
+              [style.background-image]="'url(' + imageService.getMealImageUrl(img.imagePath) + ')'"
+            ></div>
+            
+            <div class="slide-overlay"></div>
+            
+            
+            <!-- Indicadores -->
+            <div class="card-img-indicators" *ngIf="meal.images.length > 1">
+              <span 
+                class="indicator"
+                *ngFor="let img of meal.images; let i = index"
+                [class.active]="i === 0"
+                (click)="showSlide(i, meal._id)"
+              ></span>
+            </div>
+          </div>
+                <div class="card-body">
+                  <h5 class="card-title">{{ meal.name }}</h5>
+                  <p class="card-text">{{ meal.description }}</p>
+                  <div class="list-group mb-3">
+                    <div class="list-group-item" *ngFor="let sized of meal.sizes">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong>{{ sized.name }}</strong>
+                          <span class="ms-2">{{ sized.price | currency : "EUR" : "symbol" : "1.2-2" }}</span>
+                        </div>
+                        <button
+                          class="btn btn-primary btn-sm"
+                          (click)="addToCart(meal, sized)"
+                          [disabled]="cartItemCount > 0 && cartRestaurantId !== selectedRestaurant?._id"
+                        >
+                          <i class="bi bi-cart-plus white"></i> Adicionar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+</div>
+
+<!-- Carrinho flutuante -->
+<button
+  class="btn btn-primary position-fixed bottom-0 end-0 m-4 rounded-circle p-3 shadow-lg"
+  (click)="cartOverlay.toggle()"
+>
+  <i class="bi bi-cart3"></i>
+  <span
+    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+  >
+    {{ cartItemCount }}
+  </span>
+</button>
+
+<app-cart-overlay #cartOverlay></app-cart-overlay>

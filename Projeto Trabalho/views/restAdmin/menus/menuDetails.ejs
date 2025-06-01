@@ -1,0 +1,61 @@
+<h2 class="mb-4">
+    Detalhes do Menu: <%= menu.name %>
+  </h2>
+  
+  <!-- Estado do menu -->
+  <p>
+    <strong>Status:</strong>
+    <span class="badge bg-<%= menu.isActive ? 'success' : 'secondary' %>">
+      <%= menu.isActive ? 'Ativo' : 'Inativo' %>
+    </span>
+  </p>
+  
+  <!-- Botão para alterar estado -->
+  <a href="/rest/menu/<%= menu._id %>/status" class="btn btn-<%= menu.isActive ? 'danger' : 'success' %> mb-4">
+    <i class="bi bi-toggles"></i> <%= menu.isActive ? 'Desativar' : 'Ativar' %>
+  </a>
+  <a href="/rest/menu/<%= menu._id %>/edit" class="btn  btn-warning mb-4">
+    <i class="bi bi-pencil"></i> Editar
+  </a>
+  <hr>
+  
+  <!-- Lista de pratos -->
+  <h4>Pratos incluídos:</h4>
+
+<% if (meals.length === 0) { %>
+  <p class="text-muted">Este menu ainda não tem pratos atribuídos.</p>
+<% } else { %>
+  <ul class="list-group">
+    <% meals.forEach(meal => { %>
+      <li class="list-group-item d-flex align-items-center">
+        <!-- Imagem -->
+        <% if (meal.images && meal.images.length > 0) { %>
+          <img src="/uploads/<%= meal.images[0].imagePath %>" alt="Imagem do prato"
+               class="img-thumbnail me-3" style="width: 70px; height: 70px; object-fit: cover;">
+        <% } else { %>
+          <div class="me-3 text-muted" style="width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border-radius: .25rem;">
+            <i class="bi bi-image" style="font-size: 1.5rem;"></i>
+          </div>
+        <% } %>
+
+        <!-- Detalhes -->
+        <div class="flex-grow-1">
+          <strong><%= meal.name %></strong><br>
+          €<%= meal.sizes?.[0]?.price?.toFixed(2) || 'N/A' %>
+          <small class="text-muted d-block">
+            (<%= meal.sizes?.[0]?.name || 'sem dose' %>)
+          </small>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+
+  
+  <!-- Voltar -->
+  <div class="mt-4">
+    <a href="/rest/menu" class="btn btn-secondary">
+      <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+  </div>
+  

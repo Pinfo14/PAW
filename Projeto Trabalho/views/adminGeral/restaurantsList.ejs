@@ -1,0 +1,167 @@
+
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="m-0 flex-grow-1">
+      <i class="bi bi-shop-window me-2"></i> Lista de Restaurantes
+    </h2>
+    <div class="d-flex gap-2 flex-wrap">
+      <form class="d-flex" method="GET" action="/admin/restaurants">
+        <input type="text" name="city" class="form-control" placeholder="Pesquisar por cidade..." value="<%= queryCity %>">
+        <select name="category" class="form-select ms-2">
+          <option value="">Todas categorias</option>
+          <% categories.forEach(function(category) { %>
+            <option value="<%= category._id %>" <%= queryCategory == category._id.toString() ? 'selected' : '' %>>
+              <%= category.name %>
+            </option>
+          <% }); %>
+        </select>
+        <button type="submit" class="btn btn-primary ms-2">Filtrar</button>
+      </form>
+      <a href="/admin/dashboard" class="btn btn-secondary">Voltar</a>
+    </div>
+  </div>
+
+  <% if (error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+  <% } %>
+  <% if (message) { %>
+    <div class="alert alert-success"><%= message %></div>
+  <% } %>
+
+  <table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark text-center">
+      <tr>
+        <th>Imagem</th>
+        <th>Nome</th>
+        <th>NIF</th>
+        <th>Estado</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (restaurants.length === 0) { %>
+        <tr>
+          <td colspan="6" class="text-center">Ainda não existem restaurantes para exibir.</td>
+        </tr>
+      <% } else { %>
+        <% restaurants.forEach((restaurant, index) => { %>
+          <tr class="text-center">
+            <td>
+              <img src="/uploads/restaurants/<%= restaurant.image %>" 
+                   alt="<%= restaurant.name %>" 
+                   class="img-thumbnail" 
+                   style="max-width: 100px; max-height: 100px; object-fit: cover;">
+            </td>
+            <td class="text-start">
+              <button
+                class="btn btn-link text-decoration-none w-100 text-start fw-semibold"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#details<%= index %>"
+                aria-expanded="false"
+                aria-controls="details<%= index %>">
+                <%= restaurant.name %>
+              </button>
+            </td>
+            
+            <td><%= restaurant.nif %></td>
+            <td>
+              <span class="badge bg-<%= restaurant.approvedByAdmin ? 'success' : 'danger' %>">
+                <%= restaurant.approvedByAdmin ? 'Ativo' : 'Inativo' %>
+              </span>
+            </td>
+            <td>
+              <% if (!restaurant.approvedByAdmin) { %>
+                <form action="/admin/restaurants/<%= restaurant._id %>/toggle" method="POST" class="d-inline">
+                  <button class="btn btn-sm btn-success"  name="action" value="activate" onclick="return confirm('Ativar este restaurante?')">
+                    <i class="bi bi-check-circle-fill"></i> Aceitar
+                  </button>
+                </form>
+                <button class="btn btn-sm btn-danger" data-bs-toggle="collapse" data-bs-target="#rejectForm<%= index %>">
+                  <i class="bi bi-x-circle-fill"></i> Rejeitar
+                </button>
+                <!-- Formulário de rejeição colapsável -->
+                <div class="collapse mt-2" id="rejectForm<%= index %>">
+                  <form action="/admin/restaurants/<%= restaurant._id %>/reject" method="POST" onsubmit="return confirm('Tens a certeza que queres rejeitar este restaurante? Esta ação é irreversível.')">
+                    <div class="mb-2">
+                      <textarea name="reason" class="form-control" placeholder="Motivo da rejeição" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-danger">
+                      <i class="bi bi-x-circle"></i> Confirmar Rejeição
+                    </button>
+                  </form>
+                </div>
+              <% } else { %>
+                <form action="/admin/restaurants/<%= restaurant._id %>/remove" method="POST" class="d-inline">
+                  <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Remover este restaurante?')">
+                    <i class="bi bi-trash"></i> Remover
+                  </button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+
+          <tr class="collapse bg-light" id="details<%= index %>">
+            <td colspan="6" class="p-3">
+              <div class="row">
+                <div class="col-md-6 mb-2">
+                  <h6 class="text-primary mb-2"><i class="bi bi-buildings"></i> Empresa</h6>
+                  <p class="mb-0"><%= restaurant.companyName || 'Não definido' %></p>
+                </div>
+          
+                <div class="col-md-6 mb-2">
+                  <h6 class="text-primary mb-2"><i class="bi bi-geo-alt-fill"></i> Localização</h6>
+                  <% if (restaurant.location && restaurant.location.address) { %>
+                    <ul class="list-unstyled mb-0">
+                      <li><strong>Rua:</strong> <%= restaurant.location.address.street %></li>
+                      <li><strong>CP:</strong> <%= restaurant.location.address.postalCode %></li>
+                      <li><strong>Cidade:</strong> <%= restaurant.location.address.city %></li>
+                      <li><strong>País:</strong> <%= restaurant.location.address.country %></li>
+                    </ul>
+                  <% } else { %>
+                    <p class="text-muted">Localização não definida.</p>
+                  <% } %>
+                </div>
+          
+                <div class="col-md-6 mb-2">
+                  <h6 class="text-primary mb-2"><i class="bi bi-graph-up"></i> Estatísticas</h6>
+                  <ul class="list-unstyled mb-0">
+                    <li><strong>Pedidos Máximos:</strong> <%= restaurant.maxOrders %></li>
+                    <li><strong>Raio de Entrega:</strong> <%= restaurant.maxDeliveryRange %> metros</li>
+                    <li><strong>Total Encomendas:</strong> <%= restaurant.totalEncomendas || 0 %></li>
+                    <li><strong>Total Vendas (€):</strong> <%= restaurant.totalVendas || 0 %></li>
+                  </ul>
+                </div>
+          
+                <% if (!restaurant.approvedByAdmin) { %>
+                  <div class="col-md-6">
+                    <h6 class="text-danger"><i class="bi bi-x-circle-fill"></i> Rejeitar Pedido</h6>
+                    <form action="/admin/restaurants/<%= restaurant._id %>/reject" method="POST">
+                      <textarea name="reason" class="form-control mb-2" placeholder="Motivo da rejeição" required></textarea>
+                      <button class="btn btn-sm btn-danger">
+                        <i class="bi bi-send-fill"></i> Confirmar Rejeição
+                      </button>
+                    </form>
+                  </div>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+          
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+
+  <!-- Paginação -->
+  <% if (totalPages > 1) { %>
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+            <a class="page-link" href="/admin/restaurants?page=<%= i %>"><%= i %></a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  <% } %>

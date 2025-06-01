@@ -1,0 +1,92 @@
+<div class="container mt-5">
+  <% if (error) { %>
+    <div class="alert alert-danger" role="alert">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <h1 class="text-center mb-4">Pedido de Aprovação de Restaurante</h1>
+
+  <form action="/restAdmin/requestRestaurantSubmitted" method="POST" class="row g-3" enctype="multipart/form-data">
+    
+    <div class="col-md-6">
+      <label for="name" class="form-label">Nome do Restaurante</label>
+      <input type="text" name="name" id="name" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="nif" class="form-label">NIF</label>
+      <input type="text" name="nif" id="nif" class="form-control" required pattern="^5\d{8}$" title="Deve começar por 5 e ter 9 dígitos.">
+    </div>
+
+    <div class="col-md-6">
+      <label for="companyName" class="form-label">Nome da Empresa</label>
+      <input type="text" name="companyName" id="companyName" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="image" class="form-label">Imagem do Restaurante</label>
+      <input type="file" name="image" id="image" class="form-control" accept="image/*" required>
+      <div class="form-text">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB</div>
+    </div>
+
+    <div class="col-md-6">
+      <label for="maxOrders" class="form-label">Máx. de pedidos simultâneos</label>
+      <input type="number" name="maxOrders" id="maxOrders" class="form-control" min="1" value="50" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="maxDeliveryRange" class="form-label">Raio de entrega (km)</label>
+      <input type="number" name="maxDeliveryRange" id="maxDeliveryRange" class="form-control" step="0.1" required>
+    </div>
+
+    <fieldset class="col-12">
+      <legend class="mt-4">Localização</legend>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="street" class="form-label">Rua</label>
+          <input type="text" name="location[street]" id="street" class="form-control" required>
+        </div>
+
+        <div class="col-md-6">
+          <label for="postalCode" class="form-label">Código Postal</label>
+          <input type="text" name="location[postalCode]" id="postalCode" class="form-control" required>
+        </div>
+
+        <div class="col-md-6">
+          <label for="city" class="form-label">Cidade</label>
+          <input type="text" name="location[city]" id="city" class="form-control" required>
+        </div>
+
+        <div class="col-md-6">
+          <label for="country" class="form-label">País</label>
+          <input type="text" name="location[country]" id="country" class="form-control" value="Portugal" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="col-md-12">
+      <label for="categories" class="form-label">Categorias (até 3)</label>
+      <select name="categories" id="categories" class="form-select" multiple size="5">
+        <% categories.forEach(cat => { %>
+          <option value="<%= cat._id %>"><%= cat.name %></option>
+        <% }) %>
+      </select>
+      <div class="form-text">Use Ctrl (Windows/Linux) ou Cmd (Mac) para selecionar várias opções.</div>
+    </div>
+
+    <div class="col-md-12">
+      <label for="newCategory" class="form-label">Quer sugerir uma nova categoria?</label>
+      <input type="text" name="newCategory" id="newCategory" class="form-control" placeholder="Escreve aqui a nova categoria (opcional)">
+    </div>
+
+    <div class="col-12 d-flex justify-content-between mt-4">
+      <button type="submit" class="btn btn-success">
+        <i class="bi bi-check-circle"></i> Submeter pedido
+      </button>
+      <button type="button" class="btn btn-secondary" onclick="history.back()">
+        <i class="bi bi-arrow-left-circle"></i> Voltar
+      </button>
+    </div>
+  </form>
+</div>

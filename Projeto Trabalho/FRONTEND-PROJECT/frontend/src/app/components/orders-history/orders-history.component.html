@@ -1,0 +1,94 @@
+<div class="list-group">
+  <div *ngFor="let o of orders" class="list-group-item">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div>
+        <span class="badge bg-primary me-2">{{ o.restaurantName }}</span>
+        <span class="badge bg-secondary me-2">{{ o.id | slice : -4 }}</span>
+        <span class="text-muted me-2">{{ o.date | date : "short" }}</span>
+        <span
+          class="badge"
+          [ngClass]="{
+            'bg-success': o.status === 'Delivered',
+            'bg-warning': o.status === 'Preparing',
+            'bg-info': o.status === 'Ready',
+            'bg-danger': o.status === 'Canceled'
+          }"
+          >{{ o.status }}</span
+        >
+      </div>
+      <div class="btn-group">
+        <button
+          *ngIf="o.status === 'Delivered'"
+          class="btn btn-outline-primary btn-sm"
+          (click)="openCommentForm(o.id)"
+        >
+          <i class="bi bi-chat-dots me-1"></i>
+          Comentar
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="toggleDetails(o)"
+        >
+          <i
+            class="bi"
+            [ngClass]="showOrder(o) ? 'bi-chevron-up' : 'bi-chevron-down'"
+          ></i>
+          {{ showOrder(o) ? "Ocultar" : "Ver" }} Itens
+        </button>
+      </div>
+    </div>
+
+    <!-- Form de comentário -->
+    <div *ngIf="commentingForOrderId === o.id" class="mt-3">
+      <app-comment-form
+        [restaurantId]="o.restaurantId"
+        (submitted)="onCommentSubmitted()"
+        (cancelled)="commentingForOrderId = null"
+      >
+      </app-comment-form>
+    </div>
+
+    <!-- Detalhes do pedido -->
+    <div *ngIf="showOrder(o)" class="mt-3">
+      <h5 class="mb-3">Itens do Pedido</h5>
+      <div class="list-group">
+        <div *ngFor="let meal of o.meals" class="list-group-item">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0 me-3">
+              <img
+                *ngIf="meal.image"
+                [src]="meal.image"
+                [alt]="meal.name"
+                class="rounded"
+                style="width: 60px; height: 60px; object-fit: cover"
+              />
+              <img
+                *ngIf="!meal.image"
+                src="assets/images/meal-placeholder.jpg"
+                [alt]="meal.name"
+                class="rounded"
+                style="width: 60px; height: 60px; object-fit: cover"
+              />
+            </div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">{{ meal.size }}× {{ meal.name }}</h6>
+                </div>
+                <span class="badge bg-primary rounded-pill">
+                  {{ meal.price | currency : "EUR" : "symbol" : "1.2-2" }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensagem quando não há pedidos -->
+  <div *ngIf="orders.length === 0" class="text-center py-5">
+    <i class="bi bi-clock-history display-1 text-muted"></i>
+    <p class="mt-3">Nenhum pedido encontrado.</p>
+  </div>
+</div>

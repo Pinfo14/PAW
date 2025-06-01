@@ -1,0 +1,76 @@
+<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  class="card"
+  enctype="multipart/form-data"
+>
+  <div class="card-body">
+    <!-- Texto do comentário -->
+    <div class="mb-3">
+      <label for="commentText" class="form-label"
+        >Escreve o teu comentário</label
+      >
+      <textarea
+        id="commentText"
+        formControlName="text"
+        class="form-control"
+        rows="4"
+        placeholder="Escreve o teu comentário aqui..."
+      ></textarea>
+      <div
+        *ngIf="form.controls['text'].invalid && form.controls['text'].touched"
+        class="form-text text-danger"
+      >
+        Comentário obrigatório (máx. 1000 caracteres).
+      </div>
+    </div>
+
+    <!-- Upload de imagens -->
+    <div class="mb-3">
+      <label class="form-label">Insere uma fotografia!</label>
+      <input
+        type="file"
+        (change)="onFilesSelected($event)"
+        accept="image/*"
+        multiple
+        class="form-control"
+      />
+      <div *ngIf="fileError" class="form-text text-danger">
+        {{ fileError }}
+      </div>
+      <div class="mt-2 d-flex gap-2 flex-wrap">
+        <img
+          *ngFor="let preview of previews"
+          [src]="preview"
+          class="img-thumbnail"
+          style="width: 80px; height: 80px; object-fit: cover"
+        />
+      </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="d-flex gap-2">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="form.invalid || loading"
+      >
+        <i class="bi bi-send me-2"></i>
+        {{ loading ? "A enviar..." : "Enviar" }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="cancelled.emit()"
+      >
+        <i class="bi bi-x-circle me-2"></i>
+        Cancelar
+      </button>
+    </div>
+
+    <!-- Erro geral -->
+    <div *ngIf="error" class="alert alert-danger mt-3 mb-0">
+      {{ error }}
+    </div>
+  </div>
+</form>

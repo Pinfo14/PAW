@@ -1,0 +1,70 @@
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-pencil-square me-2"></i>Editar Menu</h2>
+  
+    <form action="/rest/menu/<%= menu._id %>/edit?_method=PUT" method="POST" onsubmit="return validateMealLimit()">
+      <div class="mb-3">
+        <label for="name" class="form-label">Nome do Menu</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Menu Executivo" value="<%= menu.name %>" required>
+      </div>
+  
+      <div class="mb-3">
+        <label class="form-label">Seleciona até 10 pratos para este menu:</label>
+        <input type="text" class="form-control mb-2" id="mealSearch" placeholder="🔍 Procurar prato por nome...">
+  
+        <div id="mealCheckboxList" class="form-check-group">
+          <% meals.forEach(meal => { 
+            const checked = menu.meals.includes(meal._id) ? 'checked' : '';
+            const sizeLabel = meal.sizes?.[0]?.name || '';
+            const price = meal.sizes?.[0]?.price?.toFixed(2) || '';
+          %>
+            <div class="form-check meal-checkbox">
+              <input 
+                class="form-check-input meal-input" 
+                type="checkbox" 
+                name="meals" 
+                value="<%= meal._id %>" 
+                id="meal-<%= meal._id %>"
+                <%= checked %>
+              >
+              <label class="form-check-label" for="meal-<%= meal._id %>">
+                <strong><%= meal.name %></strong> – €<%= price %>
+                <small class="text-muted">(<%= sizeLabel %>)</small>
+              </label>
+            </div>
+          <% }) %>
+        </div>
+        <small class="text-muted d-block mt-1">Podes selecionar até 10 pratos.</small>
+      </div>
+  
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-save me-1"></i>Guardar Alterações
+        </button>
+        <a href="/rest/menu" class="btn btn-secondary">
+          <i class="bi bi-arrow-left me-1"></i>Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+  
+  <script>
+    function validateMealLimit() {
+      const selected = document.querySelectorAll('.meal-input:checked');
+      if (selected.length > 10) {
+        alert("Só podes selecionar até 10 pratos.");
+        return false;
+      }
+      return true;
+    }
+  
+    document.getElementById("mealSearch").addEventListener("input", function () {
+      const search = this.value.toLowerCase();
+      const checkboxes = document.querySelectorAll(".meal-checkbox");
+  
+      checkboxes.forEach(box => {
+        const label = box.querySelector("label").innerText.toLowerCase();
+        box.style.display = label.includes(search) ? "block" : "none";
+      });
+    });
+  </script>
+  

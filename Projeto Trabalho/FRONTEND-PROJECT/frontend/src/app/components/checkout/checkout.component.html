@@ -1,0 +1,135 @@
+<!-- 1) Navbar idêntica ao dashboard -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">Food Delivery</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active"
+            >Início</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/meus-pedidos"
+            routerLinkActive="active"
+            >Meus Pedidos</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/profile" routerLinkActive="active"
+            >Perfil</a
+          >
+        </li>
+      </ul>
+      <button class="btn btn-outline-light" (click)="router.navigate(['/'])">
+        Logout
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- 2) Container -->
+<div class="container">
+  <section class="checkout-summary mb-5">
+    <h2 class="text-center mb-4">Resumo da Encomenda</h2>
+
+    <!-- *** Novo: mostra o prompt gerado *** -->
+    <div class="card mb-3" *ngIf="aiOpinion">
+      <div class="card-header bg-light">
+        <strong>Informação Nutricional Inteligente</strong>
+      </div>
+      <div class="card-body">
+        <pre style="white-space: pre-wrap">{{ aiOpinion }}</pre>
+      </div>
+    </div>
+
+    <!-- Cliente -->
+    <div class="card mb-3">
+      <div class="card-header bg-light"><strong>Cliente</strong></div>
+      <div class="card-body">
+        <p>{{ customer.name }} ({{ customer.email }})</p>
+        <p *ngIf="orderType === 'delivery'">
+          <i class="bi bi-truck me-1"></i>
+          Entrega em:
+          {{ customer.deliveryLocation.address.street }},
+          {{ customer.deliveryLocation.address.city }}
+        </p>
+        <p *ngIf="orderType === 'pickup'">
+          <i class="bi bi-shop me-1"></i>
+          Escolheu a opção de levantar no restaurante
+        </p>
+      </div>
+    </div>
+
+    <!-- Restaurante e Tipo -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-light"><strong>Restaurante</strong></div>
+          <div class="card-body">
+            {{ restaurant.name }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-light">
+            <strong>Tipo de Encomenda</strong>
+          </div>
+          <div class="card-body text-capitalize">
+            {{ orderType }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Itens -->
+    <div class="card mb-3">
+      <div class="card-header bg-light"><strong>Itens</strong></div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item" *ngFor="let item of items">
+          {{ item.quantity }}× {{ item.meal.name }} ({{
+            item.selectedSize.name
+          }})
+          <span class="float-end">
+            {{
+              item.selectedSize.price * item.quantity
+                | currency : "EUR" : "symbol" : "1.2-2"
+            }}
+          </span>
+        </li>
+      </ul>
+      <div class="card-footer text-end">
+        <strong>Total:</strong>
+        {{ total | currency : "EUR" : "symbol" : "1.2-2" }}
+      </div>
+    </div>
+
+    <!-- Ações -->
+    <div class="d-flex justify-content-between">
+      <!-- Cancelar -->
+      <button class="btn btn-outline-secondary" (click)="cancelOrder()">
+        ← Cancelar Encomenda
+      </button>
+      <!-- Confirmar -->
+      <button
+        class="btn btn-primary"
+        (click)="confirmOrder()"
+        [disabled]="loading"
+      >
+        <i class="bi bi-check-circle me-1"></i>
+        {{ loading ? "..." : "Confirmar Encomenda" }}
+      </button>
+    </div>
+  </section>
+</div>

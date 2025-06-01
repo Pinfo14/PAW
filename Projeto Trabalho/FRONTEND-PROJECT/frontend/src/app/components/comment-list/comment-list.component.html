@@ -1,0 +1,61 @@
+<div class="modal fade show" style="display: block" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Comentários</h5>
+        <button type="button" class="btn-close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="loading" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">A carregar comentários...</span>
+          </div>
+          <p class="mt-2">A carregar comentários...</p>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+        <div *ngIf="!loading && !error">
+          <div *ngIf="comments.length === 0" class="text-center py-4">
+            <i class="bi bi-chat-square-text display-1 text-muted"></i>
+            <p class="mt-3">Ainda não há comentários.</p>
+          </div>
+
+          <div class="list-group ">
+         <div *ngFor="let comment of comments" class="list-group-item">
+  <div class="d-flex justify-content-between align-items-start">
+    <div class="d-flex gap-3 flex-grow-1">
+      <!-- Texto e Data -->
+      <div class="flex-grow-1">
+        <p class="mb-1">{{ comment.text }}</p>
+        <small class="text-muted">
+          {{ comment.createdAt | date:'dd/MM/yyyy HH:mm' }}
+        </small>
+      </div>
+      
+      <!-- Imagens ao lado -->
+      <div *ngIf="comment.images?.length" class="d-flex flex-wrap gap-2">
+        <img
+          *ngFor="let img of comment.images"
+          [src]="img.imagePath"
+          class="img-thumbnail"
+          style="width: 140px; height: 140px; object-fit: cover;"
+          alt="Foto do comentário"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show"></div>

@@ -1,0 +1,391 @@
+<div class="container my-4">
+  <h2>Nova Encomenda</h2>
+
+  <% if (error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+  <% } %>
+  <!-- === 1) CLIENTE === -->
+  <div id="client-section">
+    <!-- Nav de modos de entrada -->
+    <ul class="nav nav-tabs mb-4" id="modeTabs" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" id="existing-tab" data-bs-toggle="tab" data-bs-target="#existing" type="button">
+          Cliente Existente
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="new-tab" data-bs-toggle="tab" data-bs-target="#new" type="button">
+          Registar Cliente Novo
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manual" type="button">
+          Cliente Sem Registo
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <!-- -- Cliente Existente -- -->
+      <div class="tab-pane fade show active" id="existing" role="tabpanel">
+        <div class="card p-3">
+          <h4>Selecione um Cliente</h4>
+          <table class="table table-hover">
+            <thead>
+              <tr><th>Nome</th><th>Email</th><th>NIF</th><th>Contacto</th><th>Ações</th></tr>
+            </thead>
+            <tbody>
+              <% clients.forEach(c => { %>
+                <tr data-id="<%= c._id %>"
+                    data-name="<%= c.name %>"
+                    data-email="<%= c.email %>"
+                    data-nif="<%= c.nif %>"
+                    data-contact="<%= c.contact %>">
+                  <td><%= c.name %></td>
+                  <td><%= c.email %></td>
+                  <td><%= c.nif %></td>
+                  <td><%= c.contact %></td>
+                  <td>
+                    <button type="button" class="btn btn-sm btn-primary select-client-btn">
+                      Selecionar
+                    </button>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- -- Registar Cliente Novo -- -->
+      <div class="tab-pane fade" id="new" role="tabpanel">
+        <div class="card mb-4 p-3">
+          <h4>Registar Cliente</h4>
+          <form id="client-form-new" class="needs-validation" novalidate action="/clients/register" method="POST">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="newName" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="newName" name="customerName" placeholder="João Silva" required>
+              </div>
+              <div class="col-md-4">
+                <label for="newEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="newEmail" name="customerEmail" placeholder="exemplo@dominio.com" required>
+              </div>
+              <div class="col-md-4">
+                <label for="newPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="newPassword" name="customerPassword" placeholder="••••••••" required>
+              </div>
+      
+              <div class="col-md-4">
+                <label for="newNif" class="form-label">NIF</label>
+                <input type="text" class="form-control" id="newNif" name="customerNif" placeholder="999999999" maxlength="9" pattern="^\d{9}$" required>
+              </div>
+              <div class="col-md-4 d-none" id="company-field">
+                <label for="newCompany" class="form-label">Empresa <small class="text-muted">(obrigatório se NIF começar por 5, 6 ou 8)</small></label>
+                <input type="text" class="form-control" id="newCompany" name="customerCompany" placeholder="Nome da Empresa">
+              </div>
+              <div class="col-md-4">
+                <label for="newContact" class="form-label">Contacto</label>
+                <input type="text" class="form-control" id="newContact" name="customerContact" placeholder="912345678" maxlength="9" pattern="^[29]\d{8}$" required>
+              </div>
+      
+              <!-- Morada de Faturacao -->
+              <div class="col-12">
+                <hr>
+                <h5>Morada de Faturacao</h5>
+              </div>
+              <div class="col-md-6">
+                <label for="resStreet" class="form-label">Rua</label>
+                <input type="text" class="form-control" id="resStreet" name="resStreet" placeholder="Rua das Flores, nº 123" required>
+              </div>
+              <div class="col-md-3">
+                <label for="resPostal" class="form-label">Código Postal</label>
+                <input type="text" class="form-control" id="resPostal" name="resPostal" placeholder="1234-567" required>
+              </div>
+              <div class="col-md-3">
+                <label for="resCity" class="form-label">Cidade</label>
+                <input type="text" class="form-control" id="resCity" name="resCity" placeholder="Lisboa" required>
+              </div>
+
+              <!-- Country for geocoding (Portugal neste caso) -->
+              <input type="hidden" name="resCountry" value="Portugal">
+
+              <!-- Coordenadas da morada de faturacao -->
+              <input type="hidden" id="resLat" name="resLat">
+              <input type="hidden" id="resLon" name="resLon">
+      
+              <div class="col-12">
+                <hr>
+              </div>
+      
+              <!-- Morada de Entrega -->
+              <div class="col-12 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Morada de Entrega</h5>
+                <button type="button" id="copy-address-btn" class="btn btn-sm btn-outline-secondary">
+                  Usar morada de faturacao
+                </button>
+              </div>
+              <div class="col-md-6">
+                <label for="delStreet" class="form-label">Rua</label>
+                <input type="text" class="form-control" id="delStreet" name="delStreet" placeholder="Rua das Flores, nº 123" required>
+              </div>
+              <div class="col-md-3">
+                <label for="delPostal" class="form-label">Código Postal</label>
+                <input type="text" class="form-control" id="delPostal" name="delPostal" placeholder="1234-567" required>
+              </div>
+              <div class="col-md-3">
+                <label for="delCity" class="form-label">Cidade</label>
+                <input type="text" class="form-control" id="delCity" name="delCity" placeholder="Lisboa" required>
+              </div>
+
+              <!-- Country for geocoding (Portugal neste caso) -->
+              <input type="hidden" name="delCountry" value="Portugal">
+
+              <!-- Coordenadas da morada de entrega -->
+              <input type="hidden" id="delLat" name="delLat">
+              <input type="hidden" id="delLon" name="delLon">
+            </div>
+      
+            <button type="submit" class="btn btn-primary mt-3">Registar e Continuar</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- -- Cliente Sem Registo -- -->
+      <div class="tab-pane fade" id="manual" role="tabpanel">
+        <div class="card mb-4 p-3">
+          <h4>Dados do Cliente (Manual)</h4>
+          <form id="client-form-manual">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label>Nome</label>
+                <input type="text" class="form-control" name="customerName" placeholder="Nome do cliente">
+              </div>
+              <div class="col-md-4">
+                <label>NIF</label>
+                <input type="text" class="form-control" name="customerNif" placeholder="999999999" maxlength="9">
+              </div>
+              <div class="col-md-4">
+                <label>Contacto</label>
+                <input type="text" class="form-control" name="customerContact" placeholder="Telefone">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">OK</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === 2) ITENS DA ENCOMENDA (inicialmente oculto) === -->
+  <div id="order-section" style="display:none;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>Itens da Encomenda</h4>
+      <div>
+        <button id="cancel-order" class="btn btn-outline-danger">Cancelar</button>
+        <button id="finish-order" class="btn btn-success" disabled>Finalizar</button>
+      </div>
+    </div>
+    <div id="order-summary" class="card mb-4 p-3">
+      <h5>Resumo</h5>
+      <ul class="list-group" id="summary-list"></ul>
+    </div>
+    <div class="accordion" id="menusAccordion">
+      <% activeMenus.forEach((menu,i) => { %>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading<%=i%>">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%=i%>">
+              <%= menu.name %>
+            </button>
+          </h2>
+          <div id="collapse<%=i%>" class="accordion-collapse collapse" data-bs-parent="#menusAccordion">
+            <div class="accordion-body">
+              <table class="table">
+                <thead><tr><th>Prato</th><th>Dose</th><th>Preço</th><th></th></tr></thead>
+                <tbody>
+                  <% menu.meals.forEach(meal => { %>
+                    <tr>
+                      <td><%= meal.name %></td>
+                      <td><select class="form-select size-select">
+                        <% meal.sizes.forEach(size => { %>
+                          <option value='<%= JSON.stringify({ size: size.name, price: size.price }) %>'>
+                            <%= size.name %> — €<%= size.price.toFixed(2) %>
+                          </option>
+                        <% }) %>
+                      </select></td>
+                      <td class="price-cell">€<%= meal.sizes[0].price.toFixed(2) %></td>
+                      <td><button class="btn btn-sm btn-outline-primary add-item" data-mealid="<%=meal._id%>" data-mealname="<%=meal.name%>">+</button></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const clientSection = document.getElementById('client-section');
+  const orderSection  = document.getElementById('order-section');
+  let   orderItems    = [];
+  let   orderClient   = {};
+
+  const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
+  
+  function startOrderWith(clientData) {
+    orderClient = clientData;
+    clientSection.style.display = 'none';
+    orderSection.style.display  = 'block';
+    initMenuListeners();
+    renderSummary();
+
+    const btn = document.getElementById('finish-order');
+    btn.replaceWith(btn.cloneNode(true)); // remove eventos antigos
+
+    document.getElementById('finish-order').addEventListener('click', () => {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/rest/orders/new';
+
+      console.log("ID enviado para o form:", orderClient._id);
+
+      form.innerHTML += `<input type="hidden" name="mode" value="${orderClient._id ? 'existing' : 'manual'}">`;
+
+      if (orderClient._id) {
+        form.innerHTML += `<input type="hidden" name="existingClientId" value="${orderClient._id}">`;
+      } else {
+        form.innerHTML += `<input type="hidden" name="customerName" value="${orderClient.name}">`;
+        form.innerHTML += `<input type="hidden" name="customerEmail" value="${orderClient.email || ''}">`;
+        form.innerHTML += `<input type="hidden" name="customerNif" value="${orderClient.nif}">`;
+        form.innerHTML += `<input type="hidden" name="customerContact" value="${orderClient.contact}">`;
+      }
+
+      form.innerHTML += `<input type="hidden" name="items" value='${JSON.stringify(orderItems)}'>`;
+      document.body.appendChild(form);
+      form.submit();
+    });
+  }
+
+  function initMenuListeners() {
+    document.querySelectorAll('.size-select').forEach(sel => {
+      sel.onchange = e => {
+        const { price } = JSON.parse(e.target.value);
+        e.target.closest('tr').querySelector('.price-cell')
+          .innerText = '€' + price.toFixed(2);
+      };
+    });
+    document.querySelectorAll('.add-item').forEach(btn => {
+      btn.onclick = () => {
+        const row = btn.closest('tr');
+        const { size, price } = JSON.parse(row.querySelector('.size-select').value);
+        orderItems.push({
+          mealId: btn.dataset.mealid,
+          mealName: btn.dataset.mealname,
+          size,
+          price
+        });
+        renderSummary();
+      };
+    });
+  }
+
+  function renderSummary() {
+    const ul = document.getElementById('summary-list');
+    ul.innerHTML = '';
+    orderItems.forEach((it, idx) => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between';
+      li.innerHTML = `
+        ${it.mealName} (${it.size}) — €${it.price.toFixed(2)}
+        <button class="btn btn-sm btn-danger">&times;</button>
+      `;
+      li.querySelector('button').onclick = () => {
+        orderItems.splice(idx, 1);
+        renderSummary();
+      };
+      ul.appendChild(li);
+    });
+    document.getElementById('finish-order').disabled = orderItems.length === 0;
+  }
+
+  document.querySelectorAll('.select-client-btn').forEach(btn =>
+    btn.onclick = () => {
+      const tr = btn.closest('tr');
+      startOrderWith({
+        _id:     tr.dataset.id,
+        name:    tr.dataset.name,
+        email:   tr.dataset.email,
+        nif:     tr.dataset.nif,
+        contact: tr.dataset.contact,
+      });
+    }
+  );
+
+  document.getElementById('client-form-manual').onsubmit = e => {
+    e.preventDefault();
+    const f = e.target;
+    startOrderWith({
+      name:    f.customerName.value,
+      email:   '',
+      nif:     f.customerNif.value,
+      contact: f.customerContact.value
+    });
+  };
+
+  document.getElementById('cancel-order').onclick = e => {
+    e.preventDefault();
+    orderItems = [];
+    orderSection.style.display = 'none';
+    clientSection.style.display = 'block';
+    document.getElementById('summary-list').innerHTML = '';
+  };
+
+  const nifInput = document.getElementById('newNif');
+  const companyField = document.getElementById('company-field');
+  const companyInput = document.getElementById('newCompany');
+
+  nifInput.addEventListener('input', () => {
+    const nif = nifInput.value;
+    const isCompany = /^[568]/.test(nif);
+    companyField.classList.toggle('d-none', !isCompany);
+    companyInput.required = isCompany;
+    if (!isCompany) companyInput.value = '';
+  });
+
+  (function () {
+    'use strict';
+    const form = document.getElementById('client-form-new');
+    form.addEventListener('submit', function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+        form.classList.add('was-validated');
+      }
+    }, false);
+  })();
+
+  // Copiar morada de faturação para entrega (inclui coordenadas)
+  document.getElementById('copy-address-btn').addEventListener('click', () => {
+    document.getElementById('delStreet').value = document.getElementById('resStreet').value;
+    document.getElementById('delPostal').value = document.getElementById('resPostal').value;
+    document.getElementById('delCity').value   = document.getElementById('resCity').value;
+    document.getElementById('delLat').value    = document.getElementById('resLat').value;
+    document.getElementById('delLon').value    = document.getElementById('resLon').value;
+  });
+
+  // vem do controller a informaçao do newClientID, isto é usado para trocar para a tab "Cliente Existente" e "Selecionar"
+  const newClientId = "<%= newClientId %>";
+
+  if (newClientId) {
+    // activa a tab “Cliente Existente”
+    document.getElementById('existing-tab').click();
+    // procura o botão “Selecionar” na row do novo cliente
+    const btn = document.querySelector(`tr[data-id="${newClientId}"] .select-client-btn`);
+    if (btn) btn.click();
+  }
+</script>
+

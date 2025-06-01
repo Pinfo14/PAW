@@ -1,0 +1,9 @@
+<label>
+  Categoria:
+  <select #sel (change)="onChange(sel.value)" class="form-select">
+    <option value="">Todas</option>
+    <option *ngFor="let c of categories" [value]="c._id">
+      {{ c.name }}
+    </option>
+  </select>
+</label>

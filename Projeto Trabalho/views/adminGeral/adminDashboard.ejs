@@ -1,0 +1,73 @@
+<!-- Barra de notificações -->
+<div class="container-fluid  d-flex justify-content-end">
+  <div class="dropdown">
+    <button class="btn btn-light position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-bell-fill fs-4 text-primary"></i>
+      <% if (pendingCount && pendingCount > 0) { %>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          <%= pendingCount %>
+        </span>
+      <% } %>
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notificationDropdown" style="min-width: 300px;">
+      <% if (pendingCount && pendingCount > 0) { %>
+        <li class="dropdown-item">
+          Existem <strong><%= pendingCount %></strong> pedido(s) de registo de restaurante.
+          <br>
+          <a href="/admin/restaurants?pending=true" class="link-primary">Ver Pedidos Pendentes</a>
+        </li>
+      <% } else { %>
+        <li class="dropdown-item text-muted">Sem novas notificações</li>
+      <% } %>
+    </ul>
+  </div>
+</div>
+<div class="row pb-3">
+  <h1 class="display-4">Bem vindo, <%= admin.name %> 👋</h1>
+  <p class="small">Uma forma simples de gerir os seus restaurantes e os seus pratos</p>
+</div>
+<div class="row g-4 mt-3">
+  <!-- Restaurantes -->
+  <div class="col-sm-6 col-md-4">
+    <div class="card border-primary h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-shop fs-3 text-primary me-2"></i>
+          <h5 class="card-title mb-0">Restaurantes</h5>
+        </div>
+        <p class="card-text">Gere e aprove restaurantes ativos ou pendentes.</p>
+        <a href="/admin/restaurants" class="btn btn-outline-primary">Ver Restaurantes</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categorias de Restaurantes -->
+  <div class="col-sm-6 col-md-4">
+    <div class="card border-success h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-tag-fill fs-3 text-success me-2"></i>
+          <h5 class="card-title mb-0">Categorias de Restaurantes</h5>
+        </div>
+        <p class="card-text">Adicione ou edite categorias disponíveis para os restaurantes.</p>
+        <a href="/admin/categories" class="btn btn-outline-success">Gerir Categorias</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categorias de Pratos -->
+  <div class="col-sm-6 col-md-4">
+    <div class="card border-info h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-egg-fried fs-3 text-info me-2"></i>
+          <h5 class="card-title mb-0">Categorias de Pratos</h5>
+        </div>
+        <p class="card-text">Organize os tipos de pratos disponíveis nos menus.</p>
+        <a href="/admin/mealCategories" class="btn btn-outline-info">Gerir Pratos</a>
+      </div>
+    </div>
+  </div>
+</div>
+

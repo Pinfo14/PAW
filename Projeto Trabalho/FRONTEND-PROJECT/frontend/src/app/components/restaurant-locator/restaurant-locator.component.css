@@ -1,0 +1,36 @@
+/* Estilos para labels desabilitados */
+.btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+/* Transição suave para cards bloqueados */
+.card {
+  transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.card:hover:not(.opacity-50) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Overlay para restaurantes bloqueados */
+.card .position-absolute {
+  border-radius: inherit;
+}
+
+/* Animação para o ícone de bloqueio */
+.bi-lock-fill {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+/* Badge personalizado */
+.badge.bg-secondary {
+  font-size: 0.65em;
+}

@@ -1,0 +1,41 @@
+<div class="container mt-4">
+  <div class="row pb-3">
+    <h2>Bem vindo, <%= user.name %> &#128075</h2>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <% if (!restaurant) { %>
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0"><i class="bi bi-exclamation-circle-fill me-2"></i> Sem Restaurante</h5>
+          </div>
+          <div class="card-body">
+            <p class="text-muted">A tua conta ainda não tem um restaurante associado.</p>
+            <a href="/restAdmin/requestRestaurant" class="btn btn-outline-primary">
+              <i class="bi bi-plus-circle"></i> Pedir um restaurante
+            </a>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="bi bi-hourglass-split me-2"></i> Restaurante em Análise</h5>
+          </div>
+          <div class="card-body">
+            <p><strong>Nome:</strong> <%= restaurant.name %></p>
+            <p><strong>Empresa:</strong> <%= restaurant.companyName %></p>
+            <p><strong>NIF:</strong> <%= restaurant.nif %></p>
+            <p>
+              <strong>Morada:</strong> <%= restaurant.location.address.street %>,
+              <%= restaurant.location.address.postalCode %> <%= restaurant.location.address.city %>
+            </p>
+            <div class="alert alert-info mt-3 mb-0" role="alert">
+              <%= restaurant.aprovedByAdmin ? "Aceite" : "Não Aceite" %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>

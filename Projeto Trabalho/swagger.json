@@ -1,0 +1,1009 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API do Sistema de Restaurantes",
+    "version": "1.0.0",
+    "description": "Documentação completa da REST API para clientes, restaurantes, encomendas, comentários e autenticação"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Login do cliente",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "cliente@email.com" },
+                  "password": { "type": "string", "example": "123456" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login bem-sucedido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" },
+                    "user": {
+                      "$ref": "#/components/schemas/Client"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Campos obrigatórios em falta"
+          },
+          "401": {
+            "description": "Email não registado ou password incorreta"
+          }
+        }
+      }
+    },
+    "/restaurants": {
+      "get": {
+        "summary": "Listar todos os restaurantes aprovados",
+        "tags": ["Restaurants"],
+        "responses": {
+          "200": {
+            "description": "Lista de restaurantes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Restaurant" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Registar novo cliente",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterClient"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente registado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "email": { "type": "string" },
+                        "role": { "type": "string" },
+                        "name": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação"
+          },
+          "409": {
+            "description": "Email ou NIF já registado"
+          },
+          "500": {
+            "description": "Erro interno"
+          }
+        }
+      }
+    },
+    "/client/profile": {
+      "get": {
+        "summary": "Obter perfil do cliente autenticado",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Perfil do cliente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientProfile"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado"
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar perfil do cliente",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientProfileUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Perfil atualizado"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "409": {
+            "description": "Email ou NIF já registado"
+          },
+          "404": {
+            "description": "Cliente não encontrado"
+          }
+        }
+      }
+    },
+    "/client/updateProfile": {
+      "patch": {
+        "summary": "Atualizar perfil do cliente",
+        "tags": ["Client"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Client"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Perfil atualizado com sucesso"
+          }
+        }
+      }
+    },
+    "/client/update-password": {
+      "put": {
+        "summary": "Alterar password do cliente",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": { "type": "string" },
+                  "newPassword": { "type": "string", "minLength": 6 }
+                },
+                "required": ["currentPassword", "newPassword"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password alterada com sucesso"
+          },
+          "400": {
+            "description": "Password inválida"
+          },
+          "404": {
+            "description": "Cliente não encontrado"
+          }
+        }
+      }
+    },
+    "/client/update-delivery-location": {
+      "put": {
+        "summary": "Atualizar morada de entrega do cliente",
+        "tags": ["Client"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeliveryAddress"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Morada de entrega atualizada com sucesso"
+          },
+          "400": {
+            "description": "Morada inválida"
+          },
+          "404": {
+            "description": "Cliente não encontrado"
+          }
+        }
+      }
+    },
+    "/geo": {
+      "post": {
+        "summary": "Obter coordenadas geográficas de uma morada",
+        "tags": ["Geo"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "street": { "type": "string" },
+                  "postalCode": { "type": "string" },
+                  "city": { "type": "string" },
+                  "country": { "type": "string", "default": "Portugal" }
+                },
+                "required": ["street", "postalCode", "city"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Coordenadas geográficas obtidas com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Coords"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltam campos obrigatórios"
+          },
+          "404": {
+            "description": "Não foi possível geocodificar a morada"
+          }
+        }
+      }
+    },
+    "/geo/distance": {
+      "post": {
+        "summary": "Calcular distância entre duas localizações",
+        "tags": ["Geo"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/Coords"
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/Coords"
+                  }
+                },
+                "required": ["from", "to"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Distância calculada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "distance": { "type": "number", "example": 3.5 }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Coordenadas inválidas"
+          },
+          "502": {
+            "description": "Erro ao calcular distância"
+          }
+        }
+      }
+    },
+    "/orders/historico": {
+      "get": {
+        "summary": "Listar encomendas entregues ou canceladas",
+        "tags": ["Orders"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de encomendas históricas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/createOrder": {
+      "post": {
+        "summary": "Criar nova encomenda",
+        "tags": ["Orders"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewOrder"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Encomenda criada com sucesso"
+          },
+          "400": {
+            "description": "Erro nos dados da encomenda"
+          }
+        }
+      }
+    },
+    "/orders/validateDelivery": {
+      "post": {
+        "summary": "Validar se o cliente está dentro do raio de entrega",
+        "tags": ["Orders"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "restaurantId": { "type": "string" },
+                  "userLat": { "type": "number" },
+                  "userLon": { "type": "number" }
+                },
+                "required": ["restaurantId", "userLat", "userLon"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultado da validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "distance": { "type": "number" },
+                    "maxRange": { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/pending": {
+      "get": {
+        "summary": "Obter encomenda pendente do cliente",
+        "tags": ["Orders"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Encomenda pendente ou null"
+          }
+        }
+      }
+    },
+    "/orders/stream": {
+      "get": {
+        "summary": "Stream de atualizações de encomendas via SSE",
+        "tags": ["Orders"],
+        "responses": {
+          "200": {
+            "description": "Conexão aberta para eventos de encomenda"
+          }
+        }
+      }
+    },
+    "/orders/{id}/cancel": {
+      "post": {
+        "summary": "Cancelar uma encomenda",
+        "tags": ["Orders"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Encomenda cancelada"
+          },
+          "400": {
+            "description": "Cancelamento não permitido"
+          },
+          "404": {
+            "description": "Encomenda não encontrada"
+          }
+        }
+      }
+    },
+    "/orders/checkBlacklist": {
+      "get": {
+        "summary": "Verificar se o cliente está na blacklist",
+        "tags": ["Orders"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Cliente não está na blacklist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Cliente está temporariamente impedido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Estás temporariamente impedido de fazer novas encomendas"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "example": "Cancelamentos excessivos"
+                    },
+                    "until": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-06-10T15:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/categories": {
+      "get": {
+        "summary": "Listar todas as categorias de restaurantes",
+        "tags": ["Restaurants"],
+        "responses": {
+          "200": {
+            "description": "Categorias disponíveis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RestaurantCategory" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/by-location": {
+      "get": {
+        "summary": "Listar restaurantes próximos da localização",
+        "tags": ["Restaurants"],
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["pickup", "delivery"] }
+          },
+          { "name": "category", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurantes próximos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Restaurant" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Latitude ou longitude inválidos"
+          }
+        }
+      }
+    },
+    "/restaurants/comments": {
+      "post": {
+        "summary": "Criar comentário num restaurante",
+        "tags": ["Comments"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "restaurantId": { "type": "string" },
+                  "text": { "type": "string" },
+                  "images": {
+                    "type": "array",
+                    "items": { "type": "string", "format": "base64" },
+                    "maxItems": 3
+                  }
+                },
+                "required": ["restaurantId", "text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comentário criado"
+          },
+          "400": {
+            "description": "Erro de validação"
+          },
+          "500": {
+            "description": "Erro interno"
+          }
+        }
+      }
+    },
+    "/restaurants/{restaurantId}/comments": {
+      "get": {
+        "summary": "Listar comentários de um restaurante",
+        "tags": ["Comments"],
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de comentários",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Comment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/{restaurantId}/menu/{menuId}/meals": {
+      "get": {
+        "summary": "Obter refeições ativas de um menu de restaurante",
+        "tags": ["Restaurants"],
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "menuId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de refeições",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Meal" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Restaurante ou menu não encontrado"
+          }
+        }
+      }
+    },
+    "/restaurants/{id}": {
+      "get": {
+        "summary": "Obter dados de um restaurante por ID",
+        "tags": ["Restaurants"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurante encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Restaurant" }
+              }
+            }
+          },
+          "404": {
+            "description": "Restaurante não encontrado"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Location": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "object",
+            "properties": {
+              "street": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{3}$"
+              },
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              }
+            }
+          },
+          "coordinates": {
+            "type": "object",
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "lon": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "Client": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "nif": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "contact": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "deliveryLocation": {
+            "$ref": "#/components/schemas/Location"
+          }
+        }
+      },
+      "Staff": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["RestWorker", "Admin", "RestAdmin"]
+          },
+          "restID": {
+            "type": "string"
+          }
+        }
+      },
+      "Meal": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "imagePath": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "sizes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Restaurant": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "maxOrders": {
+            "type": "number"
+          },
+          "approvedByAdmin": {
+            "type": "boolean"
+          },
+          "maxDeliveryRange": {
+            "type": "number"
+          },
+          "nif": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "menu": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "meals": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isActive": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "meals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Meal"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "image": {
+            "type": "string"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Client"
+          },
+          "restaurantId": {
+            "type": "string"
+          },
+          "meals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Meal"
+            }
+          },
+          "canceledMeal": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deliveredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentStatus": {
+            "type": "string",
+            "enum": ["Ordered", "Preparing", "Ready", "Delivered"]
+          },
+          "preparationTime": {
+            "type": "number"
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string"
+          },
+          "restaurantId": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "imagePath": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Blacklist": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "description": "ID do cliente associado (referência à coleção Client)"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Razão pela qual o cliente foi colocado na blacklist"
+          },
+          "blacklistedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de inserção na blacklist"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de expiração automática da blacklist"
+          }
+        },
+        "required": ["clientId", "reason", "expiresAt"]
+      }
+    }
+  }
+}
