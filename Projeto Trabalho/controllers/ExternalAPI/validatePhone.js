@@ -6,7 +6,7 @@
 const axios = require('axios');
 
 // Chave de acesso para Apilayer Phone Validation API (gere em https://apilayer.com)
-const ACCESS_KEY = '8fc5820999be546baa96523e30e06b5d';
+
 
 /**
  * Valida um número de telefone português.
