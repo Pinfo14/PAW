@@ -7,8 +7,6 @@
 const axios = require("axios");
 
 // Chave de acesso para OpenRouteService (gere em https://openrouteservice.org)
-const SofiaKey = "5b3ce3597851110001cf62485bfd266e0acf41529bc88663f8597d82";
-const RuiKey = "5b3ce3597851110001cf62481dd1753cdf2e45bc95008a35f0776e84";
 const ORS_API_KEY = SofiaKey;
 
 /**
